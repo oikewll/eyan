@@ -1,13 +1,15 @@
 <template>
 	<div id="app" class="mod-speak">
 		<div class="txt">{{eyan}}</div>
-		<div class="by">—— {{who}}</div>
+		<div class="by">—— {{from}}{{who}}</div>
 		<ul class="btn-list">
 			<li><a class="btn-normal btn-heart" href="javascript:;" @click="likeit()"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-xin"></use></svg><span class="n" v-if="num !== 0">{{num}}</span></a>
 			<span class="pop" v-if="poplike"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-xin"></use></svg></span>
 			</li>
-			<li><a class="btn-normal" href="javascript:;" @click="querydata()"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-genghuan"></use></svg></a></li>
-			<li><a class="btn-normal" href="javascript:;" @click="copytxt()"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-fuzhi"></use></svg></a></li>
+			<li><a class="btn-normal" href="javascript:;" @click="querydata()"><svg class="icon" :class="{rotate: loading}" aria-hidden="true"><use xlink:href="#icon-genghuan"></use></svg></a></li>
+			<li><a class="btn-normal" href="javascript:;" @click="copytxt()"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-fuzhi"></use></svg></a>
+			<span class="hint" v-if="copyed">复制成功</span>
+			</li>
 		</ul>
 	</div>
 </template>
@@ -17,9 +19,12 @@ export default {
 	name: 'app',
 	data () {
 		return {
+			loading: true,
 			poplike: false,
+			copyed: false,
 			eyan: '加载中…',
-			who: '?',
+			from: '',
+			who: '',
 			num: 0
 		}
 	},
@@ -32,8 +37,9 @@ export default {
 		querydata(){
 			let that = this;
 
+			that.loading = true;
 			that.eyan = '加载中…';
-			that.who = '？';
+			that.who = '';
 			that.num = 0;  //以后可以存储一个like的统计数
 
 			fetch('//v1.hitokoto.cn/')
@@ -41,7 +47,9 @@ export default {
 				return response.json()
 			}).then(function(json) {
 				that.eyan = json.hitokoto;
-				that.who = json.creator;
+				that.from = '《'+json.from+'》';
+				// that.who = json.creator;
+				that.loading = false;
 
 				console.log('parsed json', json)
 			}).catch(function(ex) {
@@ -66,6 +74,8 @@ export default {
 		copytxt(){
 			let that = this;
 
+			if (this.copyed) return;
+
 			// 动态创建 input 元素
 			var aux = document.createElement("input");
 			// 获得需要复制的内容
@@ -83,8 +93,11 @@ export default {
 			document.body.removeChild(aux);
 
 			// hui.toast('复制成功');
-
+			that.copyed = true;
 			console.log('复制成功：'+that.eyan);
+			setTimeout(function(){
+				that.copyed = false;
+			}, 2200);
 		}
 	}
 }
