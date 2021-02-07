@@ -1,4 +1,3 @@
-console.log(123)
 import Vue from 'vue'
 import App from './App.vue'
 import 'whatwg-fetch'

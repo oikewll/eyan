@@ -57,42 +57,38 @@ export default {
     },
     methods: {
         querydata() {
-            let that = this;
-
-            that.loading = true;
-            that.eyan = "加载中…";
-            that.who = "";
-            that.num = 0; //以后可以存储一个like的统计数
+            this.loading = true;
+            this.eyan = "加载中…";
+            this.who = "";
+            this.num = 0;
 
             fetch("//v1.hitokoto.cn/")
-                .then(function (response) {
+                .then((response)=>{
                     return response.json();
                 })
-                .then(function (json) {
-                    that.eyan = json.hitokoto;
-                    that.from = "《" + json.from + "》";
-                    // that.who = json.creator;
-                    that.loading = false;
+                .then((json)=>{
+                    this.eyan = json.hitokoto;
+                    this.from = "《" + json.from + "》";
+                    // this.who = json.creator;
+                    this.loading = false;
 
                     console.log("parsed json", json);
                 })
-                .catch(function (ex) {
+                .catch((ex)=>{
                     console.log("Err:", ex);
                 });
         },
         likeit() {
             if (this.poplike) return;
 
-            let that = this,
-                num = that.num;
-
+            let num = this.num;
             num++;
 
-            that.poplike = true;
-            that.num = num;
+            this.poplike = true;
+            this.num = num;
 
-            setTimeout(function () {
-                that.poplike = false;
+            setTimeout(()=>{
+                this.poplike = false;
             }, 500);
         },
         copytxt() {
